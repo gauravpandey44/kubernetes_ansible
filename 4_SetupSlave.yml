@@ -76,7 +76,7 @@
       - src: "{{ keys }}/{{ hostvars[inventory_hostname].node_hostname }}.pem"
         dest: /var/lib/kubelet/
       - src: "{{ keys }}/kube-proxy.kubeconfig"
-        dest: /var/lib/kube-proxy/
+        dest: /var/lib/kube-proxy/kubeconfig
         
   - name: "Setting Up Network in Slave"
     script:

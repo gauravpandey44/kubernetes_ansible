@@ -38,7 +38,7 @@
        in master node /usr/local/bin"
        
     unarchive:
-      src: "~/"
+      src: "~/master.tar.gz"
       dest: "/usr/local/bin"
       remote_src: yes
 
