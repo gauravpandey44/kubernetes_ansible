@@ -1,0 +1,4 @@
+{% for host in groups['slaves'] -%}
+   {{ hostvars[host].zerotier_ip  }}
+   {%- if not loop.last %},{% endif -%}
+{%- endfor %}

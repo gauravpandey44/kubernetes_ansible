@@ -1,0 +1,75 @@
+- name: "Playbook to  accomplish the prerequisites Networking"
+  hosts: k8
+  gather_facts: false
+  become: yes
+  tasks:
+  
+  - name: "Running apt update"
+    apt:
+     update_cache: yes
+     cache_valid_time: 21600 #6 hours
+     
+  - name: "Checking zerotier-cli"
+    command: "zerotier-cli listnetworks"
+    register: zerotier_check
+    ignore_errors: true
+    changed_when: '"listnetworks" not in zerotier_check.stdout'
+    
+  - name: "Installing zerotier-cli"
+    shell: "curl -s https://install.zerotier.com | bash"
+    #when: '"not" in zerotier_check.stdout'
+    
+
+  - name: "Register the server with zero-tier"
+    shell: zerotier-cli join "{{zerotier_network_key}}"
+    #when: 'zerotier_network_key  not in zerotier_check.stdout'
+    
+  - name: "Authorize the ZeroTier Request and Setting Zerotier Static IP"
+    shell: |
+       api="{{ zerotier_accesstoken }}"
+       network_id="{{ zerotier_network_key }}"
+       nodeid=$(sudo zerotier-cli status | awk '{print $3}')
+       name="{{ hostvars[inventory_hostname].node_name }}"
+       hostname="{{ hostvars[inventory_hostname].node_hostname }}"
+       ip="{{ hostvars[inventory_hostname].zerotier_ip }}"
+       curl -X POST -H "Content-Type: application/json" -H "Authorization: bearer ${api}"                   "https://my.zerotier.com/api/network/${network_id}/member/${nodeid}" -d "{\"name\":\"${name}\",\"description\":\"${hostname}\",\"config\":{\"authorized\":true,\"ipAssignments\":[\"${ip}\"]}}"
+   # when: '"OK" not in zerotier_check.stdout'
+    
+  - name: "Installing dnsmasq"
+    apt:
+      name: dnsmasq
+      state: present
+      
+  - name: "To setup {{ nameserver }} as namerver , hence setting dnsmasq.conf"
+    lineinfile:
+      path:  /etc/dnsmasq.conf
+      state: present
+      create: yes
+      insertafter: "# Include all files in a directory which end in .conf"
+      line: "conf-dir=/etc/dnsmasq.d/,*.conf"
+    
+  - name: "Add the 10_zerotier.conf file for nameserver"
+    blockinfile:
+      path: /etc/dnsmasq.d/10_zerotier.conf
+      state: present
+      create: yes
+      block: |
+         server=/zt/{{ nameserver }}
+         domain-needed
+         domain=zt
+    notify: "Restart dnsmasq"    
+    
+  - name: "Changing the hostname"
+    command: hostnamectl set-hostname {{ hostvars[inventory_hostname].node_hostname }} 
+  handlers:
+  - name: "Restart dnsmasq"
+    systemd:
+      name: dnsmasq
+      state: restarted
+  
+  
+      
+       
+     
+
+
