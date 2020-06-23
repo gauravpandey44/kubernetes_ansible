@@ -34,11 +34,24 @@
        ip="{{ hostvars[inventory_hostname].zerotier_ip }}"
        curl -X POST -H "Content-Type: application/json" -H "Authorization: bearer ${api}"                   "https://my.zerotier.com/api/network/${network_id}/member/${nodeid}" -d "{\"name\":\"${name}\",\"description\":\"${hostname}\",\"config\":{\"authorized\":true,\"ipAssignments\":[\"${ip}\"]}}"
    # when: '"OK" not in zerotier_check.stdout'
+      
+  - name: "Adding 127.0.0.1 in the resolv.conf"
+    lineinfile:
+     path : /etc/resolvconf/resolv.conf.d/head
+     state: present
+     create: yes
+     line: "nameserver 127.0.0.1"
+  
     
   - name: "Installing dnsmasq"
     apt:
       name: dnsmasq
       state: present
+      
+  - name: "Installing resolvconf"
+    apt:
+      name: resolvconf
+      state: present  
       
   - name: "To setup {{ nameserver }} as namerver , hence setting dnsmasq.conf"
     lineinfile:
@@ -48,6 +61,7 @@
       insertafter: "# Include all files in a directory which end in .conf"
       line: "conf-dir=/etc/dnsmasq.d/,*.conf"
     
+      
   - name: "Add the 10_zerotier.conf file for nameserver"
     blockinfile:
       path: /etc/dnsmasq.d/10_zerotier.conf
@@ -57,18 +71,28 @@
          server=/zt/{{ nameserver }}
          domain-needed
          domain=zt
-    notify: "Restart dnsmasq"    
-    
-  - name: "Changing the hostname"
-    command: hostnamectl set-hostname {{ hostvars[inventory_hostname].node_hostname }} 
-  handlers:
+         server=8.8.8.8  
+     
   - name: "Restart dnsmasq"
     systemd:
       name: dnsmasq
       state: restarted
-  
-  
+      enabled: yes
       
+  - name: "Reloading resolvconf"
+    shell: resolvconf -u 
+    
+  - name: "Stopping systemd-resolved.service"
+    systemd:
+      name:  systemd-resolved
+      state: stopped
+      enabled: no 
+      
+  - name: "To remove DNS related errors loading kernel module"
+    shell: "modprobe br_netfilter"
+      
+  - name: "Changing the hostname"
+    command: hostnamectl set-hostname {{ hostvars[inventory_hostname].node_hostname }}      
        
      
 

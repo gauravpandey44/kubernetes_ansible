@@ -41,7 +41,17 @@
       src: "~/master.tar.gz"
       dest: "/usr/local/bin"
       remote_src: yes
-
+      
+  - name: "Delete old directories in master node"
+    file:
+      state: absent
+      path: "{{ item }}"
+    with_items:
+        - "/etc/kubernetes/config"
+        - "/etc/etcd"
+        - "/var/lib/etcd"
+        - "/var/lib/kubernetes"
+        
   - name: "Create few directories in master node"
     file:
       state: directory

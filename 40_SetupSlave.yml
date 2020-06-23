@@ -112,9 +112,26 @@
         - docker 
         - kubelet
         - kube-proxy
+        
+#   - name: "Add manual routes"
+#     net_static_route:
+#       prefix: "{{ hostvars[item]['POD_CIDR'] }}"
+#       next_hop: "{{ hostvars[item]['zerotier_ip'] }}"
+#       state: present
+#     with_items: "{{ groups['slaves'] }}"
+#     when: "item !=  inventory_hostname" 
       
-      
-       
+  - name: "Delete old manual routes if exist"
+    shell: "ip route del {{ hostvars[item]['POD_CIDR'] }} via {{ hostvars[item]['zerotier_ip'] }}"
+    with_items: "{{ groups['slaves'] }}"
+    when: "item !=  inventory_hostname"
+    ignore_errors: yes
+    
+  - name: "Add new manual routes"
+    shell: "ip route add {{ hostvars[item]['POD_CIDR'] }} via {{ hostvars[item]['zerotier_ip'] }}"
+    with_items: "{{ groups['slaves'] }}"
+    when: "item !=  inventory_hostname"
+    ignore_errors: yes       
        
        
    

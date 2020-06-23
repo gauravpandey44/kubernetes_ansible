@@ -3,13 +3,13 @@
 #Load Balancer
 [lb]
 
-#Remote Access PC
+#Remote Access PC , can be your laptop
 [remote_manager]
-62.171.186.51 ansible_ssh_user=gaurav
+1.2.3.4 ansible_ssh_user=gaurav
 
 #add master public IP
 [masters]
-35.208.124.20 ansible_ssh_user=gaurav node_name=master1 node_hostname=master1.zt zerotier_ip=192.168.196.120
+5.6.7.8 ansible_ssh_user=gaurav node_name=master1 node_hostname=master1.zt zerotier_ip=192.168.196.120
 
 
 #add slave public IP
@@ -34,23 +34,23 @@ remote_manager
 #variables for k8 cluster
 [k8:vars]
 ansible_ssh_user=ubuntu
-zerotier_network_key="a09acf023378d183"
-zerotier_accesstoken="dy9KunbkB11D6kw3RL0aLYzlcnTqVXf8"
-nameserver=62.171.186.51
+zerotier_network_key=""
+zerotier_accesstoken=""
+nameserver=1.2.3.4
 
 
 
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
-ansible_ssh_private_key_file=~/AWS/cloud/gaurav
+ansible_ssh_private_key_file=~/AWS/cloud/gaurav.priv
 ssh_config="~/.ssh/config"
 cluster_name="Kubernetes_by_Ansible"
 KUBERNETES_PUBLIC_ADDRESS=192.168.196.120
 KEYS_PATH="~/gen_keys"
-MASTER_SETUP_TAR_SOURCE="~/coding/k8s/master.tar.gz"
-SLAVE_SETUP_TAR_SOURCE="~/coding/k8s/slave.tar.gz"
-SLAVE_CNI_SETUP_TAR_SOURCE="~/coding/k8s/cni.tar.gz"
+MASTER_SETUP_TAR_SOURCE="~/DEVELOPMENT/coding/k8s/master.tar.gz"
+SLAVE_SETUP_TAR_SOURCE="~/DEVELOPMENT/coding/k8s/slave.tar.gz"
+SLAVE_CNI_SETUP_TAR_SOURCE="~/DEVELOPMENT/coding/k8s/cni.tar.gz"
 
 
 
