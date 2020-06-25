@@ -132,6 +132,11 @@
     with_items: "{{ groups['slaves'] }}"
     when: "item !=  inventory_hostname"
     ignore_errors: yes       
+    
+  - name: "To remove DNS related errors loading kernel module "
+    shell: |
+        modprobe br_netfilter
+        ln -s /run/resolvconf/ /run/systemd/resolve
        
        
    
