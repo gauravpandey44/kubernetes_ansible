@@ -90,6 +90,33 @@
       
   - name: "To remove DNS related errors loading kernel module"
     shell: "modprobe br_netfilter"
+    
+  - name: "Install Rclone"
+    shell: "curl https://rclone.org/install.sh | sudo bash"
+    ignore_errors: true
+    
+  - name: "Creating /.config/rclone/ directory and mount point /mnt/GDRIVE"
+    file: 
+      path: "{{ item }}"
+      state: directory 
+    with_items:
+      - "/root/.config/rclone"
+      - "/mnt/GDRIVE"
+  
+  - name: "Copying rclone.conf file"
+    copy:
+      src: "{{ RCLONE_CONF_FILE }}"
+      dest: "~/.config/rclone/rclone.conf"
+      
+  - name: "Creating systemd Unit file"
+    script:
+      cmd: ./slave/create_rclone-service.sh "{{ SERVER_SHARE_DRIVE }}"
+      
+  - name: "Restart rclone"
+    systemd:
+      name: rclone
+      enabled: yes
+      state: restarted
       
   - name: "Changing the hostname"
     command: hostnamectl set-hostname {{ hostvars[inventory_hostname].node_hostname }}      

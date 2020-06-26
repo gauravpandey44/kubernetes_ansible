@@ -101,6 +101,13 @@ drwxr-xr-x 2 gaurav gaurav 4.0K Jun 13 09:18 slave
     - add all servers here (master1,master2,slave1,slave2)
     - also add the control server , Nameserver (which your all other master , slaves will use this as a nameserver to resolve the hostnames
 
+3. Download and Configure Rclone (Google drive NFS volume)
+    - Download , Refer : rclone
+
+    - Config : setup , Config file is stored here ~/.config/rclone/rclone.conf
+    
+    - `sudo mkdir /mnt/GDRIVE ; sudo chmod -R 777 /mnt/GDRIVE`
+    
 ### Making it Run
 
 1. Run `ansible-playbook 10_pre-configure_networking.yml`

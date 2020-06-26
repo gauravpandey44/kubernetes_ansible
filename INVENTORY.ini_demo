@@ -51,7 +51,8 @@ KEYS_PATH="~/gen_keys"
 MASTER_SETUP_TAR_SOURCE="~/DEVELOPMENT/coding/k8s/master.tar.gz"
 SLAVE_SETUP_TAR_SOURCE="~/DEVELOPMENT/coding/k8s/slave.tar.gz"
 SLAVE_CNI_SETUP_TAR_SOURCE="~/DEVELOPMENT/coding/k8s/cni.tar.gz"
-
+SERVER_SHARE_DRIVE="SERVER-SHARE-DRIVE" #Google Drive directory name , that should already exist
+RCLONE_CONF_FILE="./rclone.conf"
 
 
 
