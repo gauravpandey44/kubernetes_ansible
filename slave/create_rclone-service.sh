@@ -13,9 +13,12 @@ After=network.target
 
 [Service]
 ExecStart=/usr/bin/rclone mount google-drive:$SERVER_SHARE_DRIVE/ /mnt/GDRIVE/ \\
---vfs-cache-mode full \\
+--vfs-cache-mode writes \\
 --allow-other \\
---allow-non-empty
+--allow-non-empty\\
+--file-perms 0666 \\
+--dir-perms 0777 \\
+--vfs-cache-poll-interval 0m1s
 
 Restart=on-failure
 RestartSec=5
