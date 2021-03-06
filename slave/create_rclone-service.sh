@@ -12,8 +12,9 @@ DefaultDependencies=no
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/rclone mount google-drive:$SERVER_SHARE_DRIVE/ /mnt/GDRIVE/ \\
---vfs-cache-mode writes \\
+ExecStart=/usr/bin/rclone -vv mount google-drive:$SERVER_SHARE_DRIVE/ /mnt/GDRIVE/ \\
+--poll-interval 0m1s \\
+--vfs-cache-mode full \\
 --allow-other \\
 --allow-non-empty\\
 --file-perms 0666 \\

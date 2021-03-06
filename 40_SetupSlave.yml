@@ -136,7 +136,12 @@
   - name: "To remove DNS related errors loading kernel module "
     shell: |
         modprobe br_netfilter
-        ln -s /run/resolvconf/ /run/systemd/resolve
+        
+  - name: "Create Softlink /run/systemd/resolve--> /run/resolvconf/" 
+    file:
+      src: /run/resolvconf/
+      dest: /run/systemd/resolve
+      state: link
        
        
    
